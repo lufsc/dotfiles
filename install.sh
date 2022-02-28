@@ -3,6 +3,13 @@
 set -e
 #set -o xtrace
 
+packages=(
+	zsh
+	vim
+	git
+	tmux
+	)
+
 source_dir=$(dirname $(realpath -s $0))
 target_dir=$(realpath -s $1)
 
@@ -16,7 +23,7 @@ fi
 link_dir() {
 	if [ ! -d $2 ]
 	then
-		echo "Creating directory $2"
+		echo "  -> Creating directory $2"
 		mkdir "$2"
 	fi
 	for f in $(ls -A $1)
@@ -33,9 +40,11 @@ link_dir() {
 
 # usage link_file src target
 link_file() {
-	echo "Linking '$1' -> '$2'"
+	echo "  -> Linking '$1' -> '$2'"
 	ln -sf $1 $2
 }
+
+echo "==> Linking config files"
 
 for f in $(ls -A)
 do
@@ -56,3 +65,8 @@ do
 	fi
 done
 
+echo "==> Installing packages"
+sudo pacman -S --needed $packages
+
+echo "==> Changing shell"
+echo "$USER:/bin/zsh" | chsh
