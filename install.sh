@@ -1,17 +1,21 @@
 #!/bin/sh
 
 set -e
-#set -o xtrace
+set -o xtrace
 
-packages=(
+packages="
 	zsh
+	grml-zsh-config
 	vim
 	git
 	tmux
-	)
+	"
+
 
 source_dir=$(dirname $(realpath -s $0))
 target_dir=$(realpath -s $1)
+
+echo "Source: $source_dir, Target: $target_dir"
 
 if [ $# -ne 1 ] || [ $1 = '-h' ] || [ $1 = '--help' ]
 then
@@ -45,17 +49,16 @@ link_file() {
 }
 
 echo "==> Linking config files"
-
-for f in $(ls -A)
+for f in $(ls -A $source_dir)
 do
-	if [ -f "$f" ]
+	if [ -f "$source_dir/$f" ]
 	then
 		if [ "$f" = "$(basename $0)" ]
 		then
 			continue
 		fi
 		link_file "$source_dir/$f" "$target_dir/$f"
-	elif [ -d "$f" ]
+	elif [ -d "$source_dir/$f" ]
 	then
 		if [ "$f" = ".git" ]
 		then
@@ -69,4 +72,4 @@ echo "==> Installing packages"
 sudo pacman -S --needed --noconfirm $packages
 
 echo "==> Changing shell"
-echo "$USER:/bin/zsh" | chsh
+sudo usermod -s /bin/zsh $(whoami)
