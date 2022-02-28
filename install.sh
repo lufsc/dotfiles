@@ -66,7 +66,7 @@ do
 done
 
 echo "==> Installing packages"
-sudo pacman -S --needed $packages
+sudo pacman -S --needed --noconfirm $packages
 
 echo "==> Changing shell"
 echo "$USER:/bin/zsh" | chsh
